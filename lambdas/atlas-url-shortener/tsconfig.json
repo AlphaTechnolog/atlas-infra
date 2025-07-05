@@ -6,6 +6,11 @@
       "es2020",
       "dom"
     ],
+    "baseUrl": ".",
+    "paths":  {
+      "/opt/nodejs/*": ["../../../atlas-url-shortener-layer/src/*"],
+      "/opt/nodejs/node_modules/*": ["../../../atlas-url-shortener-layer/src/node_modules/*"],
+    },
     "declaration": true,
     "outDir": "dist",
     "strict": true,
