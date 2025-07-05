@@ -6,7 +6,7 @@ import * as crypto from "crypto";
  * to the Domain layer and should have no external dependencies.
  */
 
-import { DEFAULT_SHORT_CODE_LENGTH } from "./shortened-url.d";
+export const DEFAULT_SHORT_CODE_LENGTH = 6;
 
 export class ShortenedUrl {
   public readonly id: string;  // The unique id for the url, e.g: the short code.
