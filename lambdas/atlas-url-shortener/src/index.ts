@@ -1,6 +1,6 @@
 import type { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { container } from '/opt/nodejs/di/container';
-import {ProcessUrlUseCase} from "/opt/nodejs/app/use-cases/process-url-use-case";
+import { ProcessUrlUseCase } from "/opt/nodejs/app/use-cases/process-url-use-case";
 
 type Body = {
   url: string;

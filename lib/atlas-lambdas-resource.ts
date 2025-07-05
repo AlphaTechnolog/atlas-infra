@@ -16,12 +16,17 @@ export class AtlasLambdasResource extends Construct {
       cdk.Fn.importValue(layerExportID),
     );
 
+    const lambdaPath = path.join(
+      __dirname,
+      '../lambdas/atlas-url-shortener/dist/atlas-infra/lambdas/atlas-url-shortener/src',  // lmao
+    );
+
     this.urlShortener = new lambda.Function(this, 'AtlasUrlShortener', {
       functionName: 'atlas-url-shortener',
       description: 'Url shortener lambda function which emits converted urls.',
       handler: 'index.handler',
       layers: [urlShortenerLayer],
-      code: lambda.Code.fromAsset(path.join(__dirname, '..', 'lambdas', 'atlas-url-shortener', 'dist')),
+      code: lambda.Code.fromAsset(lambdaPath),
       runtime: lambda.Runtime.NODEJS_22_X,
     });
   }
