@@ -11,7 +11,7 @@ export class AtlasLayersResource extends Construct {
 
     this.urlShortenerLayer = new lambda.LayerVersion(this, 'UrlShortenerLayer', {
       layerVersionName: 'atlas-url-shortener-layer',
-      code: lambda.Code.fromAsset(path.join(__dirname, '../lambdas/atlas-url-shortener-layer/dist/layer.zip')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '../layers/atlas-url-shortener-layer/dist/layer.zip')),
       compatibleRuntimes: [lambda.Runtime.NODEJS_22_X],
       description: 'Layer which contains business logic for the url shortener lambda written in typescript',
       removalPolicy: cdk.RemovalPolicy.RETAIN,

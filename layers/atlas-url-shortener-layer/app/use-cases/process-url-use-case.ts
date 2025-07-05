@@ -2,6 +2,7 @@
  * @file This file defines the `ProcessUrlUseCase`. This use case will receive an url, shortens it via crypto,
  * then will emit it into the stream, and will allow other micros to take analytics for it.
  */
+import { ShortenedUrl } from "../../domain/entities/shortened-url";
 import type { ProcessUrlInput, ProcessUrlOutput } from "../dtos/process-url-dto";
 
 export class ProcessUrlUseCase {
@@ -19,13 +20,16 @@ export class ProcessUrlUseCase {
       throw new Error("URL is required");
     }
 
-    console.log("[ShortenedLayer::ProcessUrlUseCase.execute()] Received url", { url });
+    // TODO: Emit this to kafka stream.
+    const shortenedURL = ShortenedUrl.create(url);
+    console.log("[ProcessUrlUseCase::execute()] Created new shortened url", { shortenedURL });
 
-    // TODO: Actually call the ShortenedUrl domain and then the Kafka publisher to send an actual response.
     return {
-      processedUrl: url,
       message: "Shortened url has been published successfully",
-      timestamp: new Date().toISOString(),
-    }
+      shortenedURL: {
+        ...shortenedURL,
+        createdAt: shortenedURL.createdAt.toISOString(),
+      },
+    };
   }
 }

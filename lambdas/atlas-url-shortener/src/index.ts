@@ -37,13 +37,21 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
   const { url } = body;
   const useCase = container.resolve<ProcessUrlUseCase>("ProcessUrlUseCase");
-  console.log("Resolved useCase?", Boolean(useCase));
 
-  const output = await useCase.execute({ url });
-
-  return {
-    statusCode: 200,
-    headers: defaultHeaders(),
-    body: JSON.stringify(output),
-  };
+  try {
+    return {
+      statusCode: 200,
+      headers: defaultHeaders(),
+      body: JSON.stringify(await useCase.execute({ url })),
+    };
+  } catch (err: any) {
+    return {
+      statusCode: 500,
+      headers: defaultHeaders(),
+      body: JSON.stringify({
+        err: true,
+        message: String(err),
+      }),
+    }
+  }
 }
