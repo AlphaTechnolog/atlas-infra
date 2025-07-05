@@ -1,17 +1,16 @@
 {
-  "name": "atlas-url-shortner",
-  "module": "src/index.ts",
+  "name": "src",
   "type": "module",
   "scripts": {
-    "build": "./build-aux/build.sh"
+    "build": "build-aux/build.sh"
   },
   "devDependencies": {
     "@types/bun": "latest"
   },
   "peerDependencies": {
-    "typescript": "^5.8.3"
+    "typescript": "^5.0.0"
   },
   "dependencies": {
-    "aws-lambda": "^1.0.7"
+    "crypto": "^1.0.1"
   }
 }
