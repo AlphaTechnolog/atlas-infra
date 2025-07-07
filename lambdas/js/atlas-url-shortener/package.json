@@ -6,6 +6,7 @@
     "build": "./build-aux/build.sh"
   },
   "devDependencies": {
+    "@types/aws-lambda": "^8.10.150",
     "@types/bun": "latest"
   },
   "peerDependencies": {
