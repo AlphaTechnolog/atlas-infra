@@ -18,8 +18,6 @@ func NewURLListenerHandler(urlListenerUC *usecase.URLListenerUseCase) *URLListen
 }
 
 func (h *URLListenerHandler) Handle(ctx context.Context, e events.SQSEvent) (map[string]any, error) {
-	_ = ctx
-
 	for _, record := range e.Records {
 		var shortenedURL domain.ShortenedURL
 		if err := shortenedURL.FromSQSEvent(record); err != nil {
@@ -29,7 +27,7 @@ func (h *URLListenerHandler) Handle(ctx context.Context, e events.SQSEvent) (map
 			}, nil
 		}
 
-		if err := h.URLListenerUseCase.HandleShortenedURL(&shortenedURL); err != nil {
+		if err := h.URLListenerUseCase.HandleShortenedURL(ctx, &shortenedURL); err != nil {
 			return map[string]any{
 				"error": err.Error(),
 				"ok":    false,
