@@ -65,4 +65,12 @@ export class ShortenedUrl {
     if (code.length > length) code = code.substring(0, length);
     return code;
   }
+
+  public displayable(): { id: string; originalUrl: string; createdAt: string; } {
+    return {
+      id: this.id,
+      originalUrl: this.originalUrl,
+      createdAt: this.createdAt.toISOString(),
+    };
+  }
 }

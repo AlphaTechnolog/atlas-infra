@@ -16,7 +16,5 @@ export interface ProcessUrlInput {
  */
 export interface ProcessUrlOutput {
   message: string;
-  shortenedURL: Omit<ShortenedUrl, 'createdAt'> & {
-    createdAt: string;  // ISO 8601 string.
-  };
+  shortenedURL: { id: string; originalUrl: string; createdAt: string; };
 }

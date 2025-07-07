@@ -11,6 +11,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@aws-sdk/client-sqs": "^3.840.0",
     "crypto": "^1.0.1"
   }
 }

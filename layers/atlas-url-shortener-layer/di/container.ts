@@ -1,4 +1,6 @@
 import { ProcessUrlUseCase } from '../app/use-cases/process-url-use-case';
+import { IUrlRepository } from "../domain/repositories/url-repository";
+import { UrlSQSPublisher } from "../infrastructure/sqs/url-publisher";
 
 type DependencyMap = { [key: string]: any };
 
@@ -33,4 +35,9 @@ class Container {
 
 export const container = new Container();
 
-container.register('ProcessUrlUseCase', () => new ProcessUrlUseCase());
+const urlSQSUrl = process.env.SHORTENED_URLS_SQS_URL!;
+
+container.register('UrlSQSPublisher', (): IUrlRepository => new UrlSQSPublisher(urlSQSUrl));
+container.register('ProcessUrlUseCase', () => new ProcessUrlUseCase(
+  container.resolve<IUrlRepository>('UrlSQSPublisher'),
+));

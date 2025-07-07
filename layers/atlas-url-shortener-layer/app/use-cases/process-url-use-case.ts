@@ -3,11 +3,14 @@
  * then will emit it into the stream, and will allow other micros to take analytics for it.
  */
 import { ShortenedUrl } from "../../domain/entities/shortened-url";
+import { IUrlRepository } from "../../domain/repositories/url-repository";
 import type { ProcessUrlInput, ProcessUrlOutput } from "../dtos/process-url-dto";
 
 export class ProcessUrlUseCase {
-  constructor() {
-    // No dependencies for this use case.
+  private readonly _urlSQSPublisher: IUrlRepository;
+
+  constructor(urlSQSPublisher: IUrlRepository) {
+    this._urlSQSPublisher = urlSQSPublisher;
   }
 
   /**
@@ -20,16 +23,17 @@ export class ProcessUrlUseCase {
       throw new Error("URL is required");
     }
 
-    // TODO: Emit this to kafka stream.
     const shortenedURL = ShortenedUrl.create(url);
-    console.log("[ProcessUrlUseCase::execute()] Created new shortened url", { shortenedURL });
+
+    await this._urlSQSPublisher.save(shortenedURL).catch(err => {
+      console.error({ err });
+    });
+
+    console.log("[ProcessURLUseCase::execute()] Published successfully into sqs", { shortenedURL });
 
     return {
       message: "Shortened url has been published successfully",
-      shortenedURL: {
-        ...shortenedURL,
-        createdAt: shortenedURL.createdAt.toISOString(),
-      },
+      shortenedURL: shortenedURL.displayable(),
     };
   }
 }

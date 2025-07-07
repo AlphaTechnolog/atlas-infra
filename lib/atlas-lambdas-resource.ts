@@ -27,7 +27,12 @@ export class AtlasLambdasResource extends Construct {
       layers: [urlShortenerLayer],
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambdas/js/atlas-url-shortener/dist/')),
       runtime: lambda.Runtime.NODEJS_22_X,
+      environment: {
+        SHORTENED_URLS_SQS_URL: urlsSqsQueue.queueUrl,
+      },
     });
+
+    urlsSqsQueue.grantSendMessages(this.urlShortener);
 
     this.urlListener = new lambda.Function(this, 'AtlasUrlListener', {
       functionName: 'atlas-url-listener',
@@ -49,6 +54,6 @@ export class AtlasLambdasResource extends Construct {
       }),
     );
 
-    urlAnalyticsDynamoTable.grantFullAccess(this.urlListener);
+    urlAnalyticsDynamoTable.grantWriteData(this.urlListener);
   }
 }
