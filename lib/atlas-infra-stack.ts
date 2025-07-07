@@ -4,7 +4,7 @@ import { AtlasLambdasResource } from "./atlas-lambdas-resource";
 import { AtlasApiGatewayResource } from "./atlas-api-gateway-resource";
 import { AtlasLayersResource } from "./atlas-layers-resource";
 import { AtlasUrlSqsResource } from "./atlas-url-sqs-resource";
-import {AtlasDynamoUrlsResource} from "./atlas-dynamo-urls-resource";
+import { AtlasDynamoUrlsResource } from "./atlas-dynamo-urls-resource";
 
 export class AtlasInfraStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {

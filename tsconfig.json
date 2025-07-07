@@ -27,7 +27,7 @@
   "exclude": [
     "node_modules",
     "cdk.out",
-    "lambdas",
-    "layers"
+    "layers",
+    "lambdas"
   ]
 }
