@@ -2,16 +2,22 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { AtlasLambdasResource } from "./atlas-lambdas-resource";
 import { AtlasApiGatewayResource } from "./atlas-api-gateway-resource";
-import {AtlasLayersResource} from "./atlas-layers-resource";
+import { AtlasLayersResource } from "./atlas-layers-resource";
+import { AtlasUrlSqsResource } from "./atlas-url-sqs-resource";
+import {AtlasDynamoUrlsResource} from "./atlas-dynamo-urls-resource";
 
 export class AtlasInfraStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
+    const urlsSqsQueue = new AtlasUrlSqsResource(this, 'AtlasUrlSqsResource');
+    const urlAnalyticsDynamoTable = new AtlasDynamoUrlsResource(this, 'AtlasDynamoUrlsResource');
     const layers = new AtlasLayersResource(this, 'AtlasLayersResource');
 
     const lambdas = new AtlasLambdasResource(this, 'AtlasLambdasResource', {
       urlShortenerLayer: layers.urlShortenerLayer,
+      urlsSqsQueue: urlsSqsQueue.urlSqsQueue,
+      urlAnalyticsDynamoTable: urlAnalyticsDynamoTable.urlTable,
     });
 
     new AtlasApiGatewayResource(this, 'AtlasApiGatewayResource', {

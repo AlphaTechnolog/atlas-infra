@@ -8,8 +8,8 @@
     ],
     "baseUrl": ".",
     "paths":  {
-      "/opt/nodejs/*": ["../atlas-url-shortener-layer/*"],
-      "/opt/nodejs/node_modules/*": ["../atlas-url-shortener-layer/node_modules/*"],
+      "/opt/nodejs/*": ["../../../layers/atlas-url-shortener-layer/*"],
+      "/opt/nodejs/node_modules/*": ["../../../layers/atlas-url-shortener-layer/node_modules/*"],
     },
     "declaration": true,
     "outDir": "dist",
