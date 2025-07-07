@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"fmt"
 	domain "github.com/alphatechnolog/atlas-infra/internal/domain/entities"
 	usecase "github.com/alphatechnolog/atlas-infra/usecase/atlas-url-listener"
 	"github.com/aws/aws-lambda-go/events"
@@ -21,17 +22,11 @@ func (h *URLListenerHandler) Handle(ctx context.Context, e events.SQSEvent) (map
 	for _, record := range e.Records {
 		var shortenedURL domain.ShortenedURL
 		if err := shortenedURL.FromSQSEvent(record); err != nil {
-			return map[string]any{
-				"error": err.Error(),
-				"ok":    false,
-			}, nil
+			return nil, fmt.Errorf("unable to parse shortened url from sqs: %w", err)
 		}
 
 		if err := h.URLListenerUseCase.HandleShortenedURL(ctx, &shortenedURL); err != nil {
-			return map[string]any{
-				"error": err.Error(),
-				"ok":    false,
-			}, nil
+			return nil, fmt.Errorf("unable to handle shortened url: %w", err)
 		}
 	}
 

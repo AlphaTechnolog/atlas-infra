@@ -48,5 +48,7 @@ export class AtlasLambdasResource extends Construct {
         enabled: true,
       }),
     );
+
+    urlAnalyticsDynamoTable.grantFullAccess(this.urlListener);
   }
 }
