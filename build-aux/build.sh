@@ -7,7 +7,7 @@ cd "$(dirname "$0")"/../ || exit 1
 
 # List all sources to build here in a makefile-like sources list.
 declare -a JS_SOURCES=(. ./lambdas/js/atlas-url-shortener ./layers/atlas-url-shortener-layer)
-declare -a GO_SOURCES=(./lambdas/go:atlas-url-listener)
+declare -a GO_SOURCES=(./lambdas/go:atlas-url-listener ./lambdas/go:atlas-url-consumer)
 
 function xpushd() {
   { pushd "$@" >/dev/null; } 2>&1

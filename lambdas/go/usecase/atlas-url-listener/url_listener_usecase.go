@@ -12,7 +12,6 @@ type dynamoUrlAnalyticsTableRepo repository.PersistenceRepository[domain.Shorten
 
 type URLListenerUseCase struct {
 	dynamoUrlAnalyticsTable dynamoUrlAnalyticsTableRepo
-	tableName               string
 }
 
 func NewURLListenerUseCase(dynamoUrlAnalyticsTable dynamoUrlAnalyticsTableRepo) *URLListenerUseCase {
