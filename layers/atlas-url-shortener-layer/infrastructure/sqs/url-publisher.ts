@@ -16,6 +16,7 @@ export class UrlSQSPublisher implements IUrlRepository {
       id: url.id,
       url: url.originalUrl,
       createdAt: url.createdAt.toISOString(),
+      updatedAt: url.updatedAt.toISOString(),
     };
 
     await client.send(new SendMessageCommand({

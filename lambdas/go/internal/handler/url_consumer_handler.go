@@ -20,7 +20,7 @@ func NewURLConsumerHandler(urlConsumerUC *usecase.URLConsumerUseCase) *URLConsum
 }
 
 type decodedRequest struct {
-	URL string `json:"url"`
+	ID string `json:"id"`
 }
 
 func decodeRequest(request events.APIGatewayV2HTTPRequest) (decodedRequest, error) {
@@ -61,8 +61,7 @@ func (h *URLConsumerHandler) Handle(ctx context.Context, e events.APIGatewayV2HT
 		}), nil
 	}
 
-	// TODO: Increment shortenedURL.VisitCount++
-	shortenedURL, err := h.URLConsumerUseCase.GetShortenedURL(body.URL)
+	shortenedURL, err := h.URLConsumerUseCase.GetShortenedURL(body.ID)
 	if err != nil {
 		return sendResponse(404, map[string]any{
 			"error": fmt.Sprintf("unable to obtain shortened url: %v", err),

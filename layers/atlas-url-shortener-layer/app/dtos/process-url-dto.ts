@@ -2,7 +2,7 @@
  * @file This file defines the Data Transfer Objects (DTOs) for the `ProcessUrlUseCase`.
  */
 
-import {ShortenedUrl} from "../../domain/entities/shortened-url";
+import type { FormattedShortenedURL } from "../../domain/entities/shortened-url";
 
 /**
  * Input DTO for the `ProcessUrlUseCase`.
@@ -16,5 +16,5 @@ export interface ProcessUrlInput {
  */
 export interface ProcessUrlOutput {
   message: string;
-  shortenedURL: { id: string; originalUrl: string; createdAt: string; };
+  shortenedURL: FormattedShortenedURL;
 }

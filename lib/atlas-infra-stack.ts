@@ -22,6 +22,7 @@ export class AtlasInfraStack extends cdk.Stack {
 
     new AtlasApiGatewayResource(this, 'AtlasApiGatewayResource', {
       urlShortenerFunction: lambdas.urlShortener,
+      urlConsumerFunction: lambdas.urlConsumer,
     });
   }
 }

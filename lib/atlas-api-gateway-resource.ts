@@ -5,13 +5,14 @@ import { Construct } from 'constructs';
 
 export interface ApiGatewayProps {
   urlShortenerFunction: aws_lambda.Function,
+  urlConsumerFunction: aws_lambda.Function,
 }
 
 export class AtlasApiGatewayResource extends Construct {
   constructor(scope: Construct, id: string, props: ApiGatewayProps) {
     super(scope, id);
 
-    const { urlShortenerFunction } = props;
+    const { urlShortenerFunction, urlConsumerFunction } = props;
 
     const api = new apiGatewayV2.HttpApi(this, 'AtlasApiGateway', {
       apiName: 'atlas-api-gateway',
@@ -25,11 +26,18 @@ export class AtlasApiGatewayResource extends Construct {
     });
 
     const urlShortenerIntegration = new HttpLambdaIntegration('UrlShortenerIntegration', urlShortenerFunction);
+    const urlConsumerIntegration = new HttpLambdaIntegration('UrlConsumerIntegration', urlConsumerFunction);
 
     api.addRoutes({
       path: '/',
       methods: [apiGatewayV2.HttpMethod.POST],
       integration: urlShortenerIntegration,
+    });
+
+    api.addRoutes({
+      path: '/consume',
+      methods: [apiGatewayV2.HttpMethod.POST],
+      integration: urlConsumerIntegration,
     });
   }
 }

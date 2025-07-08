@@ -11,6 +11,7 @@ type ShortenedURL struct {
 	URL        string `json:"url" dynamodbav:"url"`
 	VisitCount int64  `json:"visitCount" dynamodbav:"visitCount"`
 	CreatedAt  string `json:"createdAt" dynamodbav:"createdAt"`
+	UpdatedAt  string `json:"updatedAt" dynamodbav:"updatedAt"`
 }
 
 func (s *ShortenedURL) FromSQSEvent(message events.SQSMessage) error {

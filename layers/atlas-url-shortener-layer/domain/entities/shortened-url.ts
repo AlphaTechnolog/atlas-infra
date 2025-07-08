@@ -8,19 +8,26 @@ import * as crypto from "crypto";
 
 export const DEFAULT_SHORT_CODE_LENGTH = 6;
 
+export interface FormattedShortenedURL {
+  id: string;
+  originalUrl: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export class ShortenedUrl {
   public readonly id: string;  // The unique id for the url, e.g: the short code.
   public readonly originalUrl: string;  // The original long url.
   public readonly visitCount: number = 0;  // The visit count for this shortened url.
   public readonly createdAt: Date;  // Date of record creation.
+  public readonly updatedAt: Date;  // Date of record update.
 
   /**
    * Creates a new ShortenedUrl interface.
    * @param id
    * @param originalUrl
-   * @param createdAt
    */
-  constructor(id: string, originalUrl: string, createdAt: Date) {
+  constructor(id: string, originalUrl: string) {
     if (!id || id.trim() === '') {
       throw new Error('ShortenedURL id cannot be empty');
     }
@@ -33,14 +40,12 @@ export class ShortenedUrl {
       // FIXME: Throw here.
       console.warn(`Provided URL "${originalUrl}" is not a valid URL format.`);
     }
-    if (isNaN(createdAt.getTime())) {
-      throw new Error('Created at must be a valid Date object.');
-    }
 
     this.id = id;
     this.originalUrl = originalUrl;
     this.visitCount = 0;
-    this.createdAt = createdAt;
+    this.createdAt = new Date();
+    this.updatedAt = new Date();
   }
 
   /**
@@ -51,8 +56,7 @@ export class ShortenedUrl {
    */
   public static create(originalUrl: string, shortCodeLength: number = DEFAULT_SHORT_CODE_LENGTH) {
     const id = this.generateShortCode(shortCodeLength);
-    const createdAt = new Date();
-    return new ShortenedUrl(id, originalUrl, createdAt);
+    return new ShortenedUrl(id, originalUrl);
   }
 
   /**
@@ -68,11 +72,12 @@ export class ShortenedUrl {
     return code;
   }
 
-  public displayable(): { id: string; originalUrl: string; createdAt: string; } {
+  public displayable(): FormattedShortenedURL {
     return {
       id: this.id,
       originalUrl: this.originalUrl,
       createdAt: this.createdAt.toISOString(),
+      updatedAt: this.updatedAt.toISOString(),
     };
   }
 }

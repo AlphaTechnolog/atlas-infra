@@ -14,6 +14,7 @@ export type AtlasLambdasResourceProps = {
 export class AtlasLambdasResource extends Construct {
   public urlShortener: lambda.Function;
   public urlListener: lambda.Function;
+  public urlConsumer: lambda.Function;
 
   constructor(scope: Construct, id: string, props: AtlasLambdasResourceProps) {
     super(scope, id);
@@ -55,5 +56,20 @@ export class AtlasLambdasResource extends Construct {
     );
 
     urlAnalyticsDynamoTable.grantWriteData(this.urlListener);
+
+    this.urlConsumer = new lambda.Function(this, 'AtlasUrlConsumer', {
+      functionName: 'atlas-url-consumer',
+      description: 'Lambda which returns the shortened url by its id and updates analytics based on usage',
+      handler: 'bootstrap',
+      code: lambda.Code.fromAsset(path.join(__dirname, '../lambdas/go/dist/atlas-url-consumer.zip')),
+      runtime: lambda.Runtime.PROVIDED_AL2023,
+      architecture: lambda.Architecture.X86_64,
+      loggingFormat: lambda.LoggingFormat.JSON,
+      environment: {
+        DYNAMO_URL_ANALYTICS_TABLE_NAME: urlAnalyticsDynamoTable.tableName,
+      },
+    });
+
+    urlAnalyticsDynamoTable.grantReadWriteData(this.urlConsumer);
   }
 }
