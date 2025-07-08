@@ -12,6 +12,7 @@ export class AtlasDynamoUrlsResource extends Construct {
       tableName: 'atlas-url-analytics',
       billingMode: dynamo.BillingMode.PAY_PER_REQUEST,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
+      stream: dynamo.StreamViewType.NEW_AND_OLD_IMAGES,
       partitionKey: {
         name: 'id',
         type: dynamo.AttributeType.STRING,

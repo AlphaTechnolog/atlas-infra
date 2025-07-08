@@ -1,12 +1,13 @@
 {
-  "name": "atlas-url-shortner",
+  "name": "atlas-url-visit-count-subscription-manager",
   "module": "src/index.ts",
   "type": "module",
   "scripts": {
     "build": "./build-aux/build.sh"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.150"
+    "@types/aws-lambda": "^8.10.150",
+    "@types/node": "^24.0.11"
   },
   "peerDependencies": {
     "typescript": "^5.8.3"

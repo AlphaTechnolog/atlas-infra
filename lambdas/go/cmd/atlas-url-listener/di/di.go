@@ -1,6 +1,7 @@
 package di
 
 import (
+	"context"
 	"github.com/alphatechnolog/atlas-infra/appconfig"
 	infrastructure "github.com/alphatechnolog/atlas-infra/infrastructure/dynamodb"
 	"log"
@@ -17,6 +18,7 @@ func InitialiseAtlasURLListenerDependencies() *handler.URLListenerHandler {
 	}
 
 	urlAnalyticsTable := infrastructure.NewDynamoDBRepository[domain.ShortenedURL](
+		context.TODO(),
 		dynamoClient,
 		appconfig.DynamoUrlAnalyticsTableName,
 		"id",

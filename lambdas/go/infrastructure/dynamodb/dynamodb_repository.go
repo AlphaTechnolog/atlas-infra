@@ -16,9 +16,11 @@ type DynamoDBRepository[T any] struct {
 	client     *dynamodb.Client
 	tableName  string
 	primaryKey string
+	ctx        context.Context
 }
 
 func NewDynamoDBRepository[T any](
+	ctx context.Context,
 	client *dynamodb.Client,
 	tableName string,
 	primaryKey string,
@@ -27,7 +29,23 @@ func NewDynamoDBRepository[T any](
 		tableName:  tableName,
 		primaryKey: primaryKey,
 		client:     client,
+		ctx:        ctx,
 	}
+}
+
+func (r *DynamoDBRepository[T]) GetItems(out *[]T) error {
+	input := &dynamodb.ScanInput{
+		TableName: aws.String(r.tableName),
+	}
+
+	result, err := r.client.Scan(r.ctx, input)
+	if err != nil {
+		return fmt.Errorf("failed to perform dynamo.Scan(): %w", err)
+	}
+	if err := attributevalue.UnmarshalListOfMaps(result.Items, out); err != nil {
+		return fmt.Errorf("failed to unmarshal dynamodb items: %w", err)
+	}
+	return nil
 }
 
 func (r *DynamoDBRepository[T]) GetByPK(pk string) (map[string]types.AttributeValue, error) {
@@ -38,7 +56,7 @@ func (r *DynamoDBRepository[T]) GetByPK(pk string) (map[string]types.AttributeVa
 		},
 	}
 
-	result, err := r.client.GetItem(context.TODO(), input)
+	result, err := r.client.GetItem(r.ctx, input)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get item by %s: %w", pk, err)
 	}
@@ -71,7 +89,7 @@ func (r *DynamoDBRepository[T]) Create(entity T) error {
 		ConditionExpression: aws.String("attribute_not_exists(id)"),
 	}
 
-	if _, err := r.client.PutItem(context.TODO(), input); err != nil {
+	if _, err := r.client.PutItem(r.ctx, input); err != nil {
 		var condFailedErr *types.ConditionalCheckFailedException
 		if errors.As(err, &condFailedErr) {
 			return fmt.Errorf("item with the same id already exists")
@@ -129,7 +147,7 @@ func (r *DynamoDBRepository[T]) UpdateAndGet(pk string, setters []string, variab
 		ReturnValues:              "ALL_NEW",
 	}
 
-	result, err := r.client.UpdateItem(context.TODO(), updateInput)
+	result, err := r.client.UpdateItem(r.ctx, updateInput)
 	if err != nil {
 		return fmt.Errorf("failed to update item: %w", err)
 	}

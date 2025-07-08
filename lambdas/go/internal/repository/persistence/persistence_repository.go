@@ -5,6 +5,7 @@ import (
 )
 
 type PersistenceRepository[T any] interface {
+	GetItems(out *[]T) error
 	// GetByPK FIXME: We should not be using dynamo types here, this should be truly generic.
 	GetByPK(pk string) (map[string]types.AttributeValue, error)
 	GetItemUnmarshal(pk string, out any) error
