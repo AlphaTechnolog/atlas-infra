@@ -23,6 +23,10 @@ func NewURLListenerUseCase(dynamoUrlAnalyticsTable dynamoUrlAnalyticsTableRepo) 
 func (u *URLListenerUseCase) HandleShortenedURL(ctx context.Context, entity *domain.ShortenedURL) error {
 	_ = ctx
 
+	if entity.NeedsTTL() {
+		entity.GenTTL()
+	}
+
 	if err := u.dynamoUrlAnalyticsTable.Create(*entity); err != nil {
 		return fmt.Errorf("unable to insert entity into dynamodb table: %w", err)
 	}

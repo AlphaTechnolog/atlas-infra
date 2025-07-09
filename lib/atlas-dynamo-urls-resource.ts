@@ -13,6 +13,7 @@ export class AtlasDynamoUrlsResource extends Construct {
       billingMode: dynamo.BillingMode.PAY_PER_REQUEST,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       stream: dynamo.StreamViewType.NEW_AND_OLD_IMAGES,
+      timeToLiveAttribute: 'ttl',
       partitionKey: {
         name: 'id',
         type: dynamo.AttributeType.STRING,

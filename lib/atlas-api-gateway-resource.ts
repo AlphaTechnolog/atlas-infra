@@ -6,6 +6,7 @@ import { HttpLambdaIntegration, WebSocketLambdaIntegration } from 'aws-cdk-lib/a
 import { Construct } from 'constructs';
 
 export interface ApiGatewayProps {
+  urlFetcherFunction: aws_lambda.Function,
   urlShortenerFunction: aws_lambda.Function,
   urlConsumerFunction: aws_lambda.Function,
   urlVisitCountSubscriptionManager: aws_lambda.Function,
@@ -18,6 +19,7 @@ export class AtlasApiGatewayResource extends Construct {
     super(scope, id);
 
     const {
+      urlFetcherFunction,
       urlShortenerFunction,
       urlConsumerFunction,
       urlVisitCountSubscriptionManager,
@@ -36,8 +38,15 @@ export class AtlasApiGatewayResource extends Construct {
       },
     });
 
+    const urlFetcherIntegration = new HttpLambdaIntegration('UrlFetcherIntegration', urlFetcherFunction);
     const urlShortenerIntegration = new HttpLambdaIntegration('UrlShortenerIntegration', urlShortenerFunction);
     const urlConsumerIntegration = new HttpLambdaIntegration('UrlConsumerIntegration', urlConsumerFunction);
+
+    api.addRoutes({
+      path: '/',
+      methods: [apiGatewayV2.HttpMethod.GET],
+      integration: urlFetcherIntegration,
+    })
 
     api.addRoutes({
       path: '/',

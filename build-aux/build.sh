@@ -6,8 +6,18 @@ set -e
 cd "$(dirname "$0")"/../ || exit 1
 
 # List all sources to build here in a makefile-like sources list.
-declare -a JS_SOURCES=(. ./lambdas/js/atlas-url-shortener ./lambdas/js/atlas-url-visit-count-subscription-manager ./layers/atlas-url-shortener-layer)
-declare -a GO_SOURCES=(./lambdas/go:atlas-url-listener ./lambdas/go:atlas-url-consumer ./lambdas/go:atlas-visit-count-stream-processor)
+declare -a JS_SOURCES=(
+  ./layers/atlas-url-shortener-layer
+  ./lambdas/js/atlas-url-shortener
+  ./lambdas/js/atlas-url-visit-count-subscription-manager
+  .
+)
+declare -a GO_SOURCES=(
+  ./lambdas/go:atlas-url-fetcher
+  ./lambdas/go:atlas-url-consumer
+  ./lambdas/go:atlas-url-listener
+  ./lambdas/go:atlas-visit-count-stream-processor
+)
 
 function xpushd() {
   { pushd "$@" >/dev/null; } 2>&1

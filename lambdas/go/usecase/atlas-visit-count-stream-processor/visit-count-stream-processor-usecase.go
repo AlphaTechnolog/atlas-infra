@@ -48,6 +48,7 @@ func (u *VisitCountStreamProcessorUseCase) Handle(ctx context.Context, updateRec
 
 	log.Printf("Processing record ID: %s, eventName: %s\n", updateRecord.EventID, updateRecord.EventName)
 
+	// dynamo sdk needs types updates i guess 😭
 	convNew := ddbconversions.AttributeValueMapFrom(updateRecord.Change.NewImage)
 	convOld := ddbconversions.AttributeValueMapFrom(updateRecord.Change.OldImage)
 	var newRecord domain.ShortenedURL

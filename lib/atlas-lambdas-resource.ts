@@ -14,6 +14,7 @@ export type AtlasLambdasResourceProps = {
 };
 
 export class AtlasLambdasResource extends Construct {
+  public urlFetcher: lambda.Function;
   public urlShortener: lambda.Function;
   public urlListener: lambda.Function;
   public urlConsumer: lambda.Function;
@@ -24,6 +25,21 @@ export class AtlasLambdasResource extends Construct {
     super(scope, id);
 
     const { urlShortenerLayer, urlsSqsQueue, urlAnalyticsDynamoTable, wsConnectionsTable } = props;
+
+    this.urlFetcher = new lambda.Function(this, 'AtlasUrlFetcher', {
+      functionName: 'atlas-url-fetcher',
+      description: 'Lambda which serves the urls from the dynamo table',
+      handler: 'bootstrap',
+      code: lambda.Code.fromAsset(path.join(__dirname, '../lambdas/go/dist/atlas-url-fetcher.zip')),
+      runtime: lambda.Runtime.PROVIDED_AL2023,
+      architecture: lambda.Architecture.X86_64,
+      loggingFormat: lambda.LoggingFormat.JSON,
+      environment: {
+        DYNAMO_URL_ANALYTICS_TABLE_NAME: urlAnalyticsDynamoTable.tableName,
+      },
+    });
+
+    urlAnalyticsDynamoTable.grantReadData(this.urlFetcher);
 
     this.urlShortener = new lambda.Function(this, 'AtlasUrlShortener', {
       functionName: 'atlas-url-shortener',

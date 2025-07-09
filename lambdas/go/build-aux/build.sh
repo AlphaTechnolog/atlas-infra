@@ -5,7 +5,7 @@ set -e
 cd "$(dirname "$0")"/../ || exit 1
 test -d dist || mkdir -p dist
 
-declare -a LAMBDAS=('atlas-url-listener' 'atlas-url-consumer' 'atlas-visit-count-stream-processor')
+declare -a LAMBDAS=('atlas-url-listener' 'atlas-url-consumer' 'atlas-visit-count-stream-processor' 'atlas-url-fetcher')
 
 target_lambda="$1"
 
