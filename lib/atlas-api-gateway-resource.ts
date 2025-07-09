@@ -81,9 +81,10 @@ export class AtlasApiGatewayResource extends Construct {
       sourceArn: webSocketApi.arnForExecuteApiV2(),
     });
 
-    webSocketStage.grantManagementApiAccess(urlVisitCountSubscriptionManager);
+    webSocketApi.grantManageConnections(urlVisitCountStreamProcessor);
+    webSocketStage.grantManagementApiAccess(urlVisitCountStreamProcessor);
     wsConnectionsTable.grantReadWriteData(urlVisitCountSubscriptionManager);
     wsConnectionsTable.grantReadData(urlVisitCountStreamProcessor);
-    urlVisitCountStreamProcessor.addEnvironment('WEBSOCKET_ENDPOINT_URL', webSocketStage.url);
+    urlVisitCountStreamProcessor.addEnvironment('WEBSOCKET_ENDPOINT_URL', webSocketStage.callbackUrl);
   }
 }

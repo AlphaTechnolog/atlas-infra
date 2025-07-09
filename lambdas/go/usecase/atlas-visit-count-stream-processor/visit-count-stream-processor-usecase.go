@@ -43,17 +43,6 @@ func (u *VisitCountStreamProcessorUseCase) getConnections() ([]domain.WebSocketC
 	return connections, nil
 }
 
-func unmarshalStreamImage[T any](stream map[string]events.DynamoDBAttributeValue, out *T) error {
-	bytesData, err := json.Marshal(stream)
-	if err != nil {
-		return err
-	}
-	if err := json.Unmarshal(bytesData, out); err != nil {
-		return err
-	}
-	return nil
-}
-
 func (u *VisitCountStreamProcessorUseCase) Handle(ctx context.Context, updateRecord events.DynamoDBEventRecord) error {
 	_ = ctx
 
@@ -89,7 +78,7 @@ func (u *VisitCountStreamProcessorUseCase) Handle(ctx context.Context, updateRec
 
 	for _, conn := range connections {
 		log.Printf("Broadcasting update to connection ID: %s", conn.ConnectionID)
-		_, err := u.apiGatewayManagementAPIClient.PostToConnection(ctx, &apigatewaymanagementapi.PostToConnectionInput{
+		_, err = u.apiGatewayManagementAPIClient.PostToConnection(ctx, &apigatewaymanagementapi.PostToConnectionInput{
 			ConnectionId: aws.String(conn.ConnectionID),
 			Data:         messageBytes,
 		})

@@ -3,6 +3,7 @@ package infrastructure
 import (
 	"context"
 	"fmt"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/apigatewaymanagementapi"
 )
@@ -14,7 +15,7 @@ func NewApiGatewayManagementAPI(resolverURL string) (*apigatewaymanagementapi.Cl
 	}
 
 	client := apigatewaymanagementapi.NewFromConfig(cfg, func(o *apigatewaymanagementapi.Options) {
-		o.EndpointResolver = apigatewaymanagementapi.EndpointResolverFromURL(resolverURL)
+		o.BaseEndpoint = aws.String(resolverURL)
 	})
 	return client, nil
 }
