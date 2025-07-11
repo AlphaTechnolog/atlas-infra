@@ -6,7 +6,8 @@
     "build": "./build-aux/build.sh"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.150"
+    "@types/aws-lambda": "^8.10.150",
+    "@types/node": "^24.0.13"
   },
   "peerDependencies": {
     "typescript": "^5.8.3"
