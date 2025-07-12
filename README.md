@@ -1,131 +1,119 @@
-# Project Atlas
+# Atlas
 
-Atlas is a full AWS hosted project which serves as example of AWS
-usage and deployment, by creating a URL shortener in order to demonstrate
-usage of services like Lambda, SQS, ApiGateway, DynamoDB, and more.
+## Introduction
 
-This project uses CDK (typescript) in order to deploy all the infrastructure
-into AWS cloudformation stacks.
+Atlas is a project hosted on Amazon Web Services (AWS) that provides a URL shortening service. It is designed as a practical example of building and deploying a serverless application using various AWS services.
 
-Code for lambdas and more backend services are also in this repository, they're
-mostly written in both typescript and golang.
+The infrastructure is defined and managed using the AWS Cloud Development Kit (CDK) with TypeScript. The backend services are implemented as AWS Lambda functions written in both Go and TypeScript.
 
-> Atlas is just the initial codename I gave the project when creating it
+> Atlas was the original codename for the project.
 
-## Getting started
+## Architecture Overview
 
-To get started first you got to install the [AWS cli](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
-for your operating system (be it Linux, macOS or Windows). Then you
-have to configure it using an IAM access key (be it the root user
-in the AWS console or as recommended, creating an IAM used with
-the proper permissions so then you can use its access key id and secret
-access id to login).
+The project implements a serverless architecture on AWS, leveraging several key services to provide a scalable and resilient backend system.
 
-> [!NOTE]
-> Commands will assume you use bash as your shell, and you're in a unix compliant environment
+*   **Infrastructure as Code**: The entire cloud infrastructure is managed through the AWS CDK in TypeScript, allowing for version-controlled and repeatable deployments.
 
-```shell
-aws configure
-```
+*   **Compute**: AWS Lambda is used for all compute operations. The functions are written in Go and TypeScript, demonstrating polyglot development within a single project.
 
-> Use `aws configure` to LogIn in with the right credentials
+*   **API Layer**: Amazon API Gateway provides the public-facing entry points for the service, including a REST API for URL shortening and a WebSocket API for real-time updates.
 
-After logging in you can clone the project and create the CdkToolkit stack using
-bootstrap, follow the next instructions to do so:
+*   **Data Storage**: Amazon DynamoDB is used as the primary data store for persisting shortened URL data and WebSocket connection information.
 
-```shell
-git clone https://github.com/AlphaTechnolog/atlas-infra.git ~/work/atlas-infra
-cd !$
-npm install
-npm run cdk bootstrap
-# Here you will have to answer some prompts so cdk can know where to bootstrap
-# more info in: https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html
-```
+*   **Messaging**: Amazon SQS is used for asynchronous processing, decoupling the initial URL submission from the backend processing logic.
 
-after running cdk bootstrap, you should have something like this
-in cloudformation:
+*   **Code Architecture**: The Go-based Lambda functions are structured following the principles of **Clean Architecture**. This approach separates the core business logic (domain and use cases) from external concerns like database access or API gateways (infrastructure), resulting in a more maintainable and testable codebase. The project also utilizes **AWS Lambda Layers** to share common code and dependencies across multiple functions.
 
-![cloudformation-bootstrap](./assets/cloudformation-bootstrap.png)
+## Project Structure
 
-If it looks that way, perfect, we can then install the packages for the
-js resources (lambdas and layers) and prepare to build all the code.
+The repository is organized into the following main directories:
 
-```shell
-cd lambdas/js/
-for x in *; do cd $x; npm install; cd -; done
-cd ../../layers/* && npm install && cd -
-```
+*   `bin/`: Contains the entry point for the CDK application.
+*   `lib/`: Defines the AWS resources and constructs that form the `AtlasInfraStack`.
+*   `lambdas/`: Contains the source code for the Lambda functions, separated by language (`go` and `js`).
+*   `layers/`: Contains the source code for the shared Lambda Layer.
+*   `build-aux/`: Includes build scripts for the project.
+*   `assets/`: Stores static assets, such as images for documentation.
 
-Then we can proceed to build all the code, but first make sure you
-have the go compiler available:
+## Getting Started
 
-```shell
-go --version
-```
+Follow these instructions to set up and deploy the project in your own AWS account.
 
-If you get the version number, you can then go ahead to the project root
-and run the build script
+### Prerequisites
 
-```shell
-npm run build:all
-```
+Before you begin, ensure you have the following installed:
 
-This will proceed to build all the lambdas, layers, and go projects
-in a moment, you should see something like:
+*   [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+*   [Node.js and npm](https://nodejs.org/en/download/)
+*   [Go Compiler](https://go.dev/doc/install)
 
-```
-$ npm run build:all
+### Setup and Deployment
 
-> atlas-infra@0.1.0 build:all
-> bash build-aux/build.sh
+1.  **Configure AWS CLI**
 
-== + [JS] ./layers/atlas-url-shortener-layer + ==
+    First, configure the AWS CLI with your credentials. This allows the CDK to deploy resources to your account.
 
-> build
-> build-aux/build.sh
+    ```shell
+    aws configure
+    ```
 
-mkdir: created directory 'out'
-mkdir: created directory 'out/nodejs'
-'dist/app' -> 'out/nodejs/app'
-'dist/app/use-cases' -> 'out/nodejs/app/use-cases'
-'dist/app/use-cases/process-url-use-case.js' -> 'out/nodejs/app/use-cases/process-url
-...
-== + [JS] ./lambdas/js/atlas-url-shortener + ==
+2.  **Clone and Install Dependencies**
 
-> build
-> ./build-aux/build.sh
+    Clone the repository and install the root Node.js dependencies.
 
-== + [JS] ./lambdas/js/atlas-url-visit-count-subscription-manager + ==
+    ```shell
+    git clone https://github.com/AlphaTechnolog/atlas-infra.git ~/work/atlas-infra
+    cd ~/work/atlas-infra
+    npm install
+    ```
 
-> build
-> ./build-aux/build.sh
+3.  **Bootstrap CDK Environment**
 
-== + [JS] . + ==
+    Deploy the `CdkToolkit` stack to your AWS account. This stack contains resources required for the CDK to operate.
 
-> atlas-infra@0.1.0 build
-> tsc
+    ```shell
+    npm run cdk bootstrap
+    ```
+    > For more information on bootstrapping, refer to the [official AWS CDK documentation](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html).
 
-== + [GO] atlas-url-fetcher (./lambdas/go) + ==
-===Building atlas-url-fetcher===
-  adding: bootstrap (deflated 52%)
-== + [GO] atlas-url-consumer (./lambdas/go) + ==
-===Building atlas-url-consumer===
-  adding: bootstrap (deflated 52%)
-== + [GO] atlas-url-listener (./lambdas/go) + ==
-===Building atlas-url-listener===
-  adding: bootstrap (deflated 52%)
-== + [GO] atlas-visit-count-stream-processor (./lambdas/go) + ==
-===Building atlas-visit-count-stream-processor===
-  adding: bootstrap (deflated 52%)
-```
+    After a successful bootstrap, you will see a `CDKToolkit` stack in your AWS CloudFormation console.
 
-After building all the code we can proceed to deploy the stack in AWS itself
+    ![CloudFormation Bootstrap](./assets/cloudformation-bootstrap.png)
 
-```shell
-npm run cdk deploy
-```
+4.  **Install Service Dependencies**
 
-This will create a new cloudformation stack called `AtlasInfraStack`, which will
-contain all the services necessary for the backend.
+    Install the dependencies for the individual JavaScript-based Lambda functions and layers.
 
-A frontend project is also available to consume this backend, [check it out](https://github.com/AlphaTechnolog/atlas-frontend).
+    ```shell
+    # Install dependencies for JS Lambdas
+    cd lambdas/js/
+    for x in *; do cd $x && npm install && cd -; done
+    cd ../../
+
+    # Install dependencies for the Lambda Layer
+    cd layers/atlas-url-shortener-layer && npm install && cd -
+    ```
+
+5.  **Build All Project Artifacts**
+
+    Compile the TypeScript code and build the Go binaries for all services.
+
+    ```shell
+    npm run build:all
+    ```
+
+6.  **Deploy the Application Stack**
+
+    Finally, deploy the `AtlasInfraStack`, which contains all the application's resources.
+
+    ```shell
+    npm run cdk deploy
+    ```
+
+    This command will provision all the necessary AWS resources for the URL shortener backend.
+
+## Frontend Application
+
+A frontend application designed to interact with this backend is available in a separate repository.
+
+*   **Project Repository**: [atlas-frontend](https://github.com/AlphaTechnolog/atlas-frontend)
